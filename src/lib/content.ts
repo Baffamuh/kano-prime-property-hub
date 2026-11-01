@@ -229,9 +229,10 @@ export type Enquiry = {
   date: string;
   name: string;
   phone: string;
-  email?: string;
+
   message: string;
-  propertyRef?: string;
+  propertyRef?: string | undefined;
+  email?: string | undefined;
   status: "New" | "Contacted" | "Closed";
 };
 
