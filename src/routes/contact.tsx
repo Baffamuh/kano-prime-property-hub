@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useState, type FormEvent } from "react";
 import { CheckCircle2, Mail, MapPin, Phone } from "lucide-react";
 import { z } from "zod";
-import { useContent } from "@/lib/content";
+import { useContent, addEnquiry } from "@/lib/content";
 import { PageHeader } from "@/components/site-shell";
 import { Dialog, DialogContent, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 
@@ -41,6 +41,7 @@ function Contact() {
       return;
     }
     setErrors({});
+    addEnquiry({ name: r.data.name, phone: r.data.phone, email: r.data.email, message: r.data.message });
     form.reset();
     setDone(true);
   }

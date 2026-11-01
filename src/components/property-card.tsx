@@ -1,12 +1,11 @@
 import { Link } from "@tanstack/react-router";
 import { ArrowUpRight, Maximize2, MapPin, ShieldCheck } from "lucide-react";
 import type { Property } from "@/lib/content";
-import { formatMoney, parsePrice, useCurrency } from "@/lib/content";
+import { formatNaira, parsePrice } from "@/lib/content";
 
 export function Price({ price, className = "" }: { price: string; className?: string }) {
-  const cur = useCurrency();
   const n = parsePrice(price);
-  return <span className={className}>{n ? formatMoney(n, cur) : price}</span>;
+  return <span className={className}>{n ? formatNaira(n) : price}</span>;
 }
 
 export function PropertyCard({ p }: { p: Property }) {
@@ -31,6 +30,7 @@ export function PropertyCard({ p }: { p: Property }) {
         <p className="flex items-center gap-1 text-xs font-semibold uppercase tracking-wider text-primary">
           <MapPin className="h-3 w-3" /> {p.location} · {p.type}
         </p>
+        <p className="mt-2 inline-block self-start border border-gold px-2 py-0.5 font-mono text-[11px] font-bold tracking-wider text-primary">REF: {p.ref}</p>
         <h3 className="mt-2 font-display text-2xl leading-tight">{p.title}</h3>
         <p className="mt-2 line-clamp-2 text-sm text-muted-foreground">{p.description}</p>
         <div className="mt-auto flex items-center justify-between border-t border-border pt-4 mt-6 text-sm">

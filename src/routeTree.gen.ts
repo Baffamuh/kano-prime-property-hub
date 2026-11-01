@@ -16,6 +16,8 @@ import { Route as ContactRouteImport } from './routes/contact'
 import { Route as ServicesRouteImport } from './routes/services'
 import { Route as PropertiesIndexRouteImport } from './routes/properties/index'
 import { Route as PropertiesIdRouteImport } from './routes/properties/$id'
+import { Route as ZonesIndexRouteImport } from './routes/zones/index'
+import { Route as ZonesZoneRouteImport } from './routes/zones/$zone'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -52,6 +54,16 @@ const PropertiesIdRoute = PropertiesIdRouteImport.update({
   path: '/properties/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ZonesIndexRoute = ZonesIndexRouteImport.update({
+  id: '/zones/',
+  path: '/zones/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ZonesZoneRoute = ZonesZoneRouteImport.update({
+  id: '/zones/$zone',
+  path: '/zones/$zone',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -60,7 +72,9 @@ export interface FileRoutesByFullPath {
   '/contact': typeof ContactRoute
   '/services': typeof ServicesRoute
   '/properties/$id': typeof PropertiesIdRoute
+  '/zones/$zone': typeof ZonesZoneRoute
   '/properties/': typeof PropertiesIndexRoute
+  '/zones/': typeof ZonesIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -69,7 +83,9 @@ export interface FileRoutesByTo {
   '/contact': typeof ContactRoute
   '/services': typeof ServicesRoute
   '/properties/$id': typeof PropertiesIdRoute
+  '/zones/$zone': typeof ZonesZoneRoute
   '/properties': typeof PropertiesIndexRoute
+  '/zones': typeof ZonesIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -79,7 +95,9 @@ export interface FileRoutesById {
   '/contact': typeof ContactRoute
   '/services': typeof ServicesRoute
   '/properties/$id': typeof PropertiesIdRoute
+  '/zones/$zone': typeof ZonesZoneRoute
   '/properties/': typeof PropertiesIndexRoute
+  '/zones/': typeof ZonesIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -90,7 +108,9 @@ export interface FileRouteTypes {
     | '/contact'
     | '/services'
     | '/properties/$id'
+    | '/zones/$zone'
     | '/properties/'
+    | '/zones/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -99,7 +119,9 @@ export interface FileRouteTypes {
     | '/contact'
     | '/services'
     | '/properties/$id'
+    | '/zones/$zone'
     | '/properties'
+    | '/zones'
   id:
     | '__root__'
     | '/'
@@ -108,7 +130,9 @@ export interface FileRouteTypes {
     | '/contact'
     | '/services'
     | '/properties/$id'
+    | '/zones/$zone'
     | '/properties/'
+    | '/zones/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -118,7 +142,9 @@ export interface RootRouteChildren {
   ContactRoute: typeof ContactRoute
   ServicesRoute: typeof ServicesRoute
   PropertiesIdRoute: typeof PropertiesIdRoute
+  ZonesZoneRoute: typeof ZonesZoneRoute
   PropertiesIndexRoute: typeof PropertiesIndexRoute
+  ZonesIndexRoute: typeof ZonesIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -172,6 +198,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PropertiesIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/zones/': {
+      id: '/zones/'
+      path: '/zones'
+      fullPath: '/zones/'
+      preLoaderRoute: typeof ZonesIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/zones/$zone': {
+      id: '/zones/$zone'
+      path: '/zones/$zone'
+      fullPath: '/zones/$zone'
+      preLoaderRoute: typeof ZonesZoneRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -182,7 +222,9 @@ const rootRouteChildren: RootRouteChildren = {
   ContactRoute: ContactRoute,
   ServicesRoute: ServicesRoute,
   PropertiesIdRoute: PropertiesIdRoute,
+  ZonesZoneRoute: ZonesZoneRoute,
   PropertiesIndexRoute: PropertiesIndexRoute,
+  ZonesIndexRoute: ZonesIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

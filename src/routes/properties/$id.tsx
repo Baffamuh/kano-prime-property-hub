@@ -1,7 +1,7 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { useState } from "react";
 import { ArrowLeft, CalendarCheck, Check, MapPin, MessageCircle, Phone, Share2, ShieldCheck, Calculator } from "lucide-react";
-import { defaultContent, formatMoney, monthlyInstalment, parsePrice, useContent, useCurrency, waLink } from "@/lib/content";
+import { defaultContent, addEnquiry, formatNaira, monthlyInstalment, parsePrice, useContent, waLink } from "@/lib/content";
 import { Price, PropertyCard } from "@/components/property-card";
 
 export const Route = createFileRoute("/properties/$id")({
@@ -28,14 +28,13 @@ const inp = "h-12 w-full border border-input bg-background px-3 text-sm";
 function Detail() {
   const { id } = Route.useParams();
   const c = useContent();
-  const cur = useCurrency();
   const p = c.properties.find((x) => x.id === id);
   const [dep, setDep] = useState(30);
   const [months, setMonths] = useState(12);
   const [form, setForm] = useState({ name: "", phone: "", date: "", mode: "In person" });
   if (!p) throw notFound();
   const n = parsePrice(p.price);
-  const msg = `Hello Prime Zone Estates, I'd like to book an inspection.\nProperty: ${p.title} (Ref ${p.id.toUpperCase()})\nName: ${form.name}\nPhone: ${form.phone}\nPreferred date: ${form.date}\nInspection: ${form.mode}`;
+  const msg = `Hello Prime Zone Estates, I'd like to book an inspection.\nProperty: ${p.title} (Ref ${p.ref})\nName: ${form.name}\nPhone: ${form.phone}\nPreferred date: ${form.date}\nInspection: ${form.mode}`;
 
   return (
     <>
@@ -57,7 +56,7 @@ function Detail() {
       <section className="mx-auto grid max-w-7xl gap-10 px-5 py-16 lg:grid-cols-[1fr_400px]">
         <div className="space-y-12">
           <div className="grid grid-cols-2 gap-px border border-border bg-border md:grid-cols-4">
-            {[["Price", <Price key="p" price={p.price} />], ["Plot size", p.size || "—"], ["Type", p.type], ["Title", p.titleDoc || "Verified"]].map(([k, v]) => (
+            {[["Reference", p.ref], ["Price", <Price key="p" price={p.price} />], ["Plot size", p.size || "—"], ["Type", p.type], ["Title", p.titleDoc || "Verified"]].map(([k, v]) => (
               <div key={String(k)} className="bg-card p-5">
                 <p className="text-xs uppercase tracking-wider text-muted-foreground">{k}</p>
                 <p className="mt-1 font-display text-xl text-primary">{v}</p>
@@ -88,8 +87,8 @@ function Detail() {
                 </label>
               </div>
               <div className="mt-6 grid gap-px bg-border sm:grid-cols-2">
-                <div className="bg-card p-5"><p className="text-xs uppercase tracking-wider text-muted-foreground">Deposit today</p><p className="font-display text-3xl text-primary">{formatMoney((n * dep) / 100, cur)}</p></div>
-                <div className="bg-card p-5"><p className="text-xs uppercase tracking-wider text-muted-foreground">Monthly</p><p className="font-display text-3xl text-primary">{formatMoney(monthlyInstalment(n, dep, months), cur)}</p></div>
+                <div className="bg-card p-5"><p className="text-xs uppercase tracking-wider text-muted-foreground">Deposit today</p><p className="font-display text-3xl text-primary">{formatNaira((n * dep) / 100)}</p></div>
+                <div className="bg-card p-5"><p className="text-xs uppercase tracking-wider text-muted-foreground">Monthly</p><p className="font-display text-3xl text-primary">{formatNaira(monthlyInstalment(n, dep, months))}</p></div>
               </div>
             </div>
           )}
@@ -103,9 +102,9 @@ function Detail() {
         <aside className="lg:sticky lg:top-24 lg:self-start">
           <div className="border border-border bg-card p-7 shadow-[0_30px_60px_-30px_var(--color-primary)]">
             <Price price={p.price} className="font-display text-4xl text-primary" />
-            <p className="mt-1 text-xs text-muted-foreground">{cur !== "NGN" && "Approximate conversion · "}{p.size}</p>
+            <p className="mt-1 text-xs text-muted-foreground">REF: {p.ref} · {p.size}</p>
             <h3 className="mt-6 flex items-center gap-2 font-semibold"><CalendarCheck className="h-5 w-5 text-gold" /> Schedule an inspection</h3>
-            <form className="mt-4 space-y-3" onSubmit={(e) => { e.preventDefault(); window.open(waLink(c.phonePrimary, msg), "_blank"); }}>
+            <form className="mt-4 space-y-3" onSubmit={(e) => { e.preventDefault(); addEnquiry({ name: form.name, phone: form.phone, message: `Inspection request (${form.mode}) for ${form.date}`, propertyRef: p.ref }); window.open(waLink(c.phonePrimary, msg), "_blank"); }}>
               <input required className={inp} placeholder="Full name" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} />
               <input required className={inp} placeholder="Phone / WhatsApp" value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} />
               <input required type="date" className={inp} value={form.date} onChange={(e) => setForm({ ...form, date: e.target.value })} />
@@ -115,7 +114,7 @@ function Detail() {
               <button className="w-full bg-primary py-3.5 font-semibold text-primary-foreground hover:bg-primary/90">Book inspection</button>
             </form>
             <div className="mt-3 grid grid-cols-3 gap-2 text-sm">
-              <a href={waLink(c.phonePrimary, `Hello, I'm interested in ${p.title} (${p.price}).`)} target="_blank" rel="noreferrer" className="flex flex-col items-center gap-1 border border-border py-3 hover:border-primary"><MessageCircle className="h-4 w-4 text-whatsapp" />WhatsApp</a>
+              <a href={waLink(c.phonePrimary, `Hello, I'm interested in ${p.title} (Ref ${p.ref}, ${p.price}).`)} target="_blank" rel="noreferrer" className="flex flex-col items-center gap-1 border border-border py-3 hover:border-primary"><MessageCircle className="h-4 w-4 text-whatsapp" />WhatsApp</a>
               <a href={`tel:${c.phonePrimary}`} className="flex flex-col items-center gap-1 border border-border py-3 hover:border-primary"><Phone className="h-4 w-4 text-primary" />Call</a>
               <button type="button" onClick={() => navigator.share ? navigator.share({ title: p.title, url: location.href }) : navigator.clipboard.writeText(location.href)} className="flex flex-col items-center gap-1 border border-border py-3 hover:border-primary"><Share2 className="h-4 w-4 text-primary" />Share</button>
             </div>

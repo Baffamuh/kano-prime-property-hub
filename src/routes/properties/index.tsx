@@ -43,7 +43,7 @@ function Properties() {
         <div className="flex flex-col gap-3 md:flex-row">
           <div className="relative flex-1">
             <Search className="absolute left-3 top-3.5 h-5 w-5 text-muted-foreground" />
-            <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search properties…" className={`${sel} w-full pl-10`} />
+            <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search title, ref code or area…" className={`${sel} w-full pl-10`} />
           </div>
           <select value={loc} onChange={(e) => setLoc(e.target.value)} className={sel} aria-label="Location">
             <option value="all">All locations</option>
