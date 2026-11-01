@@ -58,7 +58,7 @@ function Contact() {
           ))}
           <div>
             <textarea name="message" rows={5} placeholder="How can we help?" className={`${field} h-auto py-3`} />
-            {errors.message && <p className="mt-1 text-xs text-destructive">{errors.message}</p>}
+            {errors["message"] && <p className="mt-1 text-xs text-destructive">{errors["message"]}</p>}
           </div>
           <button className="bg-primary px-8 py-4 font-semibold text-primary-foreground hover:bg-primary/90">Send message</button>
         </form>
