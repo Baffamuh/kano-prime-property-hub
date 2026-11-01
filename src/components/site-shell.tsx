@@ -20,7 +20,7 @@ export function SiteShell({ children }: { children: ReactNode }) {
       <header className="sticky top-0 z-40 border-b border-border bg-background/95 backdrop-blur">
         <div className="mx-auto flex h-20 max-w-7xl items-center justify-between gap-4 px-5">
           <Link to="/" className="flex min-w-0 items-center gap-3">
-            <img src={logo.url} alt="Prime Zone Estates Ltd logo" className="h-12 w-auto shrink-0" />
+            <img src={logo.url} alt="Prime Zone Estates Ltd logo" className="h-14 w-auto shrink-0" />
           </Link>
           <nav className="hidden items-center gap-8 md:flex">
             {links.map((l) => (
