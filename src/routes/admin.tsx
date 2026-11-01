@@ -131,7 +131,7 @@ function Admin() {
               <div className="md:col-span-2"><F label="Image link" value={p.image} onChange={(v) => setP(i, { image: v })} /></div>
               <div className="md:col-span-2"><F label="Description" value={p.description} onChange={(v) => setP(i, { description: v })} area /></div>
               <div className="md:col-span-2"><F label="Features (comma separated)" value={p.features.join(", ")} onChange={(v) => setP(i, { features: v.split(",").map((s) => s.trim()).filter(Boolean) })} /></div>
-              <button onClick={() => confirm("Remove this property?") && set("properties", d.properties.filter((_, j) => j !== i))} className="flex items-center gap-1 justself-start text-sm text-destructive">
+              <button onClick={() => confirm("Remove this property?") && set("properties", d.properties.filter((_, j) => j !== i))} className="flex items-center gap-1 justify-self-start text-sm text-destructive">
                 <Trash2 className="h-4 w-4" /> Remove
               </button>
             </div>
