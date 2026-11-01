@@ -11,3 +11,14 @@ describe("content rules", () => {
     expect(r.length).toBe(2);
   });
 });
+
+import { monthlyInstalment, parsePrice } from "@/lib/content";
+describe("payment plan", () => {
+  it("30% deposit over 12 months on ₦4,500,000", () => {
+    expect(parsePrice("₦4,500,000")).toBe(4500000);
+    expect(monthlyInstalment(4500000, 30, 12)).toBe(262500);
+  });
+  it("negotiable price is not numeric", () => {
+    expect(parsePrice("Negotiable")).toBeNull();
+  });
+});

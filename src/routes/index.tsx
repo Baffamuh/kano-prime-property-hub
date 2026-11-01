@@ -100,6 +100,68 @@ function Index() {
           {c.properties.slice(0, 3).map((p) => <PropertyCard key={p.id} p={p} />)}
         </div>
       </section>
+
+      <section className="bg-muted">
+        <div className="mx-auto max-w-7xl px-5 py-24">
+          <p className="text-xs font-bold uppercase tracking-[0.3em] text-primary">How it works</p>
+          <h2 className="mt-2 font-display text-4xl md:text-5xl">Own land in 4 simple steps</h2>
+          <div className="mt-12 grid gap-px bg-border md:grid-cols-4">
+            {[
+              ["01", "Choose a plot", "Browse verified layouts online or speak to an advisor."],
+              ["02", "Inspect", "Visit the site with us, or join a live video inspection from abroad."],
+              ["03", "Pay securely", "Outright or flexible instalments into our corporate account only."],
+              ["04", "Get documents", "Receive your allocation letter, survey plan and title papers."],
+            ].map(([n, t, d]) => (
+              <div key={n} className="bg-card p-8">
+                <p className="font-display text-5xl text-gold">{n}</p>
+                <h3 className="mt-4 font-display text-2xl">{t}</h3>
+                <p className="mt-2 text-sm text-muted-foreground">{d}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="mx-auto max-w-7xl px-5 py-24">
+        <p className="text-xs font-bold uppercase tracking-[0.3em] text-primary">Client stories</p>
+        <h2 className="mt-2 font-display text-4xl md:text-5xl">Trusted by investors at home and abroad</h2>
+        <div className="mt-12 grid gap-6 md:grid-cols-3">
+          {[
+            ["Aminu S.", "Civil servant, Kano", "I bought my first plot near BUK New Site on instalments. Documents were ready exactly as promised."],
+            ["Hauwa M.", "Nurse, London (UK)", "I inspected by video call from London. The whole process was transparent from start to finish."],
+            ["Engr. Bello Y.", "Landowner, Nasarawa GRA", "Our joint venture with Prime Zone turned an idle plot into income. Very professional team."],
+          ].map(([n, r, q]) => (
+            <figure key={n} className="border border-border bg-card p-8">
+              <Quote className="h-8 w-8 text-gold" />
+              <blockquote className="mt-4 text-foreground/85">{q}</blockquote>
+              <figcaption className="mt-6 border-t border-border pt-4"><p className="font-semibold">{n}</p><p className="text-sm text-muted-foreground">{r}</p></figcaption>
+            </figure>
+          ))}
+        </div>
+      </section>
+
+      <section className="bg-navy text-navy-foreground">
+        <div className="mx-auto grid max-w-7xl gap-12 px-5 py-24 md:grid-cols-[1fr_1.4fr]">
+          <div>
+            <p className="text-xs font-bold uppercase tracking-[0.3em] text-gold">FAQ</p>
+            <h2 className="mt-2 font-display text-4xl md:text-5xl">Questions buyers ask us</h2>
+            <Link to="/contact" className="mt-8 inline-flex items-center gap-2 bg-gold px-6 py-3 font-semibold text-gold-foreground">Ask an expert <ArrowRight className="h-4 w-4" /></Link>
+          </div>
+          <div className="divide-y divide-navy-foreground/15 border-y border-navy-foreground/15">
+            {[
+              ["Are your lands verified?", "Yes. Every plot is checked with the Kano State land registry before listing, and comes with a survey plan and title document."],
+              ["Can I pay in instalments?", "Yes. Most plots offer flexible plans from 3 to 24 months after an initial deposit. Use the calculator on any property page."],
+              ["I live abroad. Can I still buy?", "Absolutely. We offer video inspections, digital documentation and see prices in USD or GBP using the switcher at the top."],
+              ["What is a joint venture?", "Landowners partner with us to develop their land; profits or finished units are shared by agreement."],
+            ].map(([q, a]) => (
+              <details key={q} className="group py-5">
+                <summary className="flex cursor-pointer list-none items-center justify-between font-display text-xl">{q}<span className="text-gold transition-transform group-open:rotate-45">+</span></summary>
+                <p className="mt-3 text-sm opacity-80">{a}</p>
+              </details>
+            ))}
+          </div>
+        </div>
+      </section>
     </>
   );
 }
