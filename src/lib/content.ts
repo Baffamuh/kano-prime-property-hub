@@ -3,6 +3,8 @@ import ceoAsset from "@/assets/ceo.jpg.asset.json";
 
 export type Property = {
   id: string;
+  /** Unique public reference code, e.g. PZE-0001. */
+  ref?: string;
   title: string;
   location: string;
   type: "Residential Plot" | "Commercial Plot" | "Joint Venture" | "Estate Home";
@@ -30,7 +32,12 @@ export type SiteContent = {
   ceoImage: string;
   layoutImage: string;
   properties: Property[];
+  zones: Zone[];
+  agents: Agent[];
 };
+
+export type Zone = { name: string; areas: string };
+export type Agent = { id: string; name: string; phone: string; sales: number };
 
 const LAYOUT_IMG =
   "https://images.unsplash.com/photo-1592595896551-12b371d546d5?auto=format&fit=crop&w=1600&q=80";
@@ -55,6 +62,7 @@ export const defaultContent: SiteContent = {
   properties: [
     {
       id: "buk-1",
+      ref: "PZE-0001",
       title: "BUK New Site Residential Layout",
       location: "BUK New Site",
       type: "Residential Plot",
@@ -69,6 +77,7 @@ export const defaultContent: SiteContent = {
     },
     {
       id: "gwarzo-1",
+      ref: "PZE-0002",
       title: "Gwarzo Road Prime Layout",
       location: "Gwarzo Road",
       type: "Residential Plot",
@@ -83,6 +92,7 @@ export const defaultContent: SiteContent = {
     },
     {
       id: "gwarzo-com",
+      ref: "PZE-0003",
       title: "Gwarzo Road Commercial Frontage",
       location: "Gwarzo Road",
       type: "Commercial Plot",
@@ -96,6 +106,7 @@ export const defaultContent: SiteContent = {
     },
     {
       id: "jv-1",
+      ref: "PZE-0004",
       title: "Nasarawa GRA Joint Venture",
       location: "Nasarawa GRA",
       type: "Joint Venture",
@@ -109,7 +120,39 @@ export const defaultContent: SiteContent = {
       status: "Available",
     },
   ],
+  zones: [
+    { name: "BUK New Site", areas: "Rimin Zakara · Kabuga axis · University corridor" },
+    { name: "Gwarzo Road", areas: "Dorayi · Gwarzo Road extension" },
+    { name: "Nasarawa GRA", areas: "Sulaiman Crescent · Race Course" },
+  ],
+  agents: [
+    { id: "a1", name: "Sales Desk (Head Office)", phone: "07036722139", sales: 0 },
+    { id: "a2", name: "Field Inspections Team", phone: "07078444344", sales: 0 },
+  ],
 };
+
+/** Next unique reference code not already used in the list. */
+export function nextRef(list: Property[]): string {
+  const max = list.reduce((m, p) => {
+    const n = Number(p.ref?.match(/^PZE-(\d+)$/)?.[1] ?? 0);
+    return n > m ? n : m;
+  }, 0);
+  return `PZE-${String(max + 1).padStart(4, "0")}`;
+}
+
+/** Give every property a unique ref, fixing missing or duplicate codes. */
+export function ensureRefs(list: Property[]): Property[] {
+  const seen = new Set<string>();
+  const out: Property[] = [];
+  for (const p of list) {
+    let ref = p.ref;
+    if (!ref || seen.has(ref)) ref = nextRef([...list, ...out]);
+    while (seen.has(ref)) ref = `PZE-${String(Number(ref.slice(4)) + 1).padStart(4, "0")}`;
+    seen.add(ref);
+    out.push({ ...p, ref });
+  }
+  return out;
+}
 
 const KEY = "primezone-content-v2";
 const listeners = new Set<() => void>();
@@ -119,14 +162,16 @@ function read(): SiteContent {
   if (cache) return cache;
   try {
     const raw = localStorage.getItem(KEY);
-    cache = raw ? { ...defaultContent, ...JSON.parse(raw) } : defaultContent;
+    const merged: SiteContent = raw ? { ...defaultContent, ...JSON.parse(raw) } : defaultContent;
+    cache = { ...merged, properties: ensureRefs(merged.properties) };
   } catch {
     cache = defaultContent;
   }
   return cache!;
 }
 
-export function saveContent(next: SiteContent) {
+export function saveContent(input: SiteContent) {
+  const next = { ...input, properties: ensureRefs(input.properties) };
   cache = next;
   localStorage.setItem(KEY, JSON.stringify(next));
   listeners.forEach((l) => l());
@@ -158,7 +203,7 @@ export function filterProperties(list: Property[], location: string, type: strin
     (p) =>
       (location === "all" || p.location === location) &&
       (type === "all" || p.type === type) &&
-      (!s || `${p.title} ${p.description} ${p.location}`.toLowerCase().includes(s)),
+      (!s || `${p.ref ?? ""} ${p.title} ${p.description} ${p.location}`.toLowerCase().includes(s)),
   );
 }
 
@@ -168,14 +213,9 @@ export function parsePrice(price: string): number | null {
   return n > 0 ? n : null;
 }
 
-export type Currency = "NGN" | "USD" | "GBP";
-/** Approximate naira per unit — indicative only. */
-export const RATES: Record<Currency, number> = { NGN: 1, USD: 1600, GBP: 2050 };
-const SYM: Record<Currency, string> = { NGN: "₦", USD: "$", GBP: "£" };
-
-export function formatMoney(naira: number, cur: Currency) {
-  const v = naira / RATES[cur];
-  return SYM[cur] + Math.round(v).toLocaleString("en-US");
+/** All prices are shown in Nigerian Naira only. */
+export function formatNaira(naira: number) {
+  return "₦" + Math.round(naira).toLocaleString("en-US");
 }
 
 /** Monthly instalment for an interest-free payment plan. */
@@ -184,17 +224,34 @@ export function monthlyInstalment(price: number, depositPct: number, months: num
   return months > 0 ? balance / months : balance;
 }
 
-let cur: Currency = "NGN";
-const curL = new Set<() => void>();
-export function setCurrency(c: Currency) {
-  cur = c;
-  try { localStorage.setItem("pz-cur", c); } catch { /* ignore */ }
-  curL.forEach((l) => l());
+export type Enquiry = {
+  id: string;
+  date: string;
+  name: string;
+  phone: string;
+  email?: string;
+  message: string;
+  propertyRef?: string;
+  status: "New" | "Contacted" | "Closed";
+};
+
+const EKEY = "pz-enquiries";
+const eL = new Set<() => void>();
+let eCache: Enquiry[] | null = null;
+const EMPTY: Enquiry[] = [];
+function readE(): Enquiry[] {
+  if (eCache) return eCache;
+  try { eCache = JSON.parse(localStorage.getItem(EKEY) || "[]"); } catch { eCache = []; }
+  return eCache!;
 }
-export function useCurrency(): Currency {
-  return useSyncExternalStore(
-    (l) => { curL.add(l); return () => curL.delete(l); },
-    () => { try { const s = localStorage.getItem("pz-cur") as Currency | null; if (s && s !== cur && RATES[s]) cur = s; } catch { /* ignore */ } return cur; },
-    () => "NGN",
-  );
+export function saveEnquiries(list: Enquiry[]) {
+  eCache = list;
+  try { localStorage.setItem(EKEY, JSON.stringify(list)); } catch { /* ignore */ }
+  eL.forEach((l) => l());
+}
+export function addEnquiry(e: Omit<Enquiry, "id" | "date" | "status">) {
+  saveEnquiries([{ ...e, id: String(Date.now()), date: new Date().toISOString(), status: "New" }, ...readE()]);
+}
+export function useEnquiries(): Enquiry[] {
+  return useSyncExternalStore((l) => { eL.add(l); return () => eL.delete(l); }, readE, () => EMPTY);
 }

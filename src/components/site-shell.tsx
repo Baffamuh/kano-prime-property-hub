@@ -2,11 +2,12 @@ import { Link } from "@tanstack/react-router";
 import { useState, type ReactNode } from "react";
 import { Menu, MessageCircle, Phone, X, MapPin, Instagram } from "lucide-react";
 import logo from "@/assets/logo.jpg.asset.json";
-import { setCurrency, useContent, useCurrency, waLink, type Currency } from "@/lib/content";
+import { useContent, waLink } from "@/lib/content";
 
 const links = [
   { to: "/", label: "Home" },
   { to: "/properties", label: "Properties" },
+  { to: "/zones", label: "Zones" },
   { to: "/services", label: "Services" },
   { to: "/about", label: "About Us" },
   { to: "/contact", label: "Contact" },
@@ -15,7 +16,6 @@ const links = [
 export function SiteShell({ children }: { children: ReactNode }) {
   const c = useContent();
   const [open, setOpen] = useState(false);
-  const cur = useCurrency();
   return (
     <div className="flex min-h-screen flex-col">
       <div className="hidden bg-navy text-navy-foreground md:block">
@@ -23,11 +23,6 @@ export function SiteShell({ children }: { children: ReactNode }) {
           <p className="flex items-center gap-2 opacity-80"><MapPin className="h-3.5 w-3.5 text-gold" /> Nasarawa GRA, Kano · Mon–Sat 8am–6pm</p>
           <div className="flex items-center gap-5">
             <a href={`tel:${c.phoneSecondary}`} className="opacity-80 hover:text-gold">{c.phoneSecondary}</a>
-            <div className="flex items-center gap-1" role="group" aria-label="Currency">
-              {(["NGN", "USD", "GBP"] as Currency[]).map((k) => (
-                <button key={k} onClick={() => setCurrency(k)} className={`px-2 py-0.5 font-semibold ${cur === k ? "bg-gold text-gold-foreground" : "opacity-70 hover:opacity-100"}`}>{k}</button>
-              ))}
-            </div>
           </div>
         </div>
       </div>
@@ -66,11 +61,6 @@ export function SiteShell({ children }: { children: ReactNode }) {
                 {l.label}
               </Link>
             ))}
-            <div className="flex gap-2 py-3">
-              {(["NGN", "USD", "GBP"] as Currency[]).map((k) => (
-                <button key={k} onClick={() => setCurrency(k)} className={`border px-3 py-1 text-sm font-semibold ${cur === k ? "border-primary bg-primary text-primary-foreground" : "border-border"}`}>{k}</button>
-              ))}
-            </div>
           </nav>
         )}
       </header>
