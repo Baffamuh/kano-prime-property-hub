@@ -5,7 +5,7 @@ import { filterProperties, useContent } from "@/lib/content";
 import { PropertyCard } from "@/components/property-card";
 import { PageHeader } from "@/components/site-shell";
 
-export const Route = createFileRoute("/properties")({
+export const Route = createFileRoute("/properties/")({
   head: () => ({
     meta: [
       { title: "Land for Sale near BUK New Site & Gwarzo Road | Prime Zone Estates" },

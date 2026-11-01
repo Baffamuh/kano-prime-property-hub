@@ -31,6 +31,7 @@ function Admin() {
   const stored = useContent();
   const [authed, setAuthed] = useState(false);
   const [pass, setPass] = useState("");
+  const [user, setUser] = useState("");
   const [d, setD] = useState<SiteContent>(stored);
   const [msg, setMsg] = useState("");
 
@@ -43,14 +44,21 @@ function Admin() {
     return (
       <section className="mx-auto max-w-sm px-5 py-24">
         <h1 className="font-display text-4xl">Admin sign in</h1>
+        <div className="mt-6 border border-gold bg-gold/10 p-4 text-sm">
+          <p className="font-bold uppercase tracking-wider text-primary">Demo login</p>
+          <p className="mt-2">Username: <code className="font-semibold">admin</code></p>
+          <p>Passcode: <code className="font-semibold">{PASSCODE}</code></p>
+          <button type="button" onClick={() => { setUser("admin"); setPass(PASSCODE); }} className="mt-3 bg-primary px-4 py-2 text-xs font-semibold text-primary-foreground">Fill demo details</button>
+        </div>
         <form
           className="mt-6 space-y-3"
           onSubmit={(e) => {
             e.preventDefault();
-            if (pass === PASSCODE) { sessionStorage.setItem("pz-admin", "1"); setAuthed(true); }
-            else setMsg("Wrong passcode");
+            if (user.trim().toLowerCase() === "admin" && pass === PASSCODE) { sessionStorage.setItem("pz-admin", "1"); setAuthed(true); }
+            else setMsg("Wrong username or passcode");
           }}
         >
+          <input className={inp} placeholder="Username" value={user} onChange={(e) => setUser(e.target.value)} />
           <input type="password" className={inp} placeholder="Passcode" value={pass} onChange={(e) => setPass(e.target.value)} />
           {msg && <p className="text-sm text-destructive">{msg}</p>}
           <button className="w-full bg-primary py-3 font-semibold text-primary-foreground">Enter</button>
@@ -66,6 +74,7 @@ function Admin() {
     <section className="mx-auto max-w-5xl space-y-10 px-5 py-14">
       <div className="sticky top-20 z-30 flex flex-wrap items-center justify-between gap-3 border-b border-border bg-background py-4">
         <h1 className="font-display text-4xl">Control Panel</h1>
+        <button onClick={() => { sessionStorage.removeItem("pz-admin"); setAuthed(false); }} className="text-sm text-muted-foreground underline">Sign out</button>
         <div className="flex flex-wrap items-center gap-2">
           {msg && <span className="text-sm text-primary">{msg}</span>}
           <button onClick={() => { const b = new Blob([JSON.stringify(d, null, 2)], { type: "application/json" }); const a = document.createElement("a"); a.href = URL.createObjectURL(b); a.download = "content.json"; a.click(); }} className="border border-border px-4 py-2 text-sm">Export</button>
@@ -118,6 +127,7 @@ function Admin() {
               <F label="Price" value={p.price} onChange={(v) => setP(i, { price: v })} />
               <F label="Location" value={p.location} onChange={(v) => setP(i, { location: v })} />
               <F label="Size" value={p.size} onChange={(v) => setP(i, { size: v })} />
+              <F label="Title document (e.g. C of O, R of O)" value={p.titleDoc ?? ""} onChange={(v) => setP(i, { titleDoc: v })} />
               <label className="text-sm"><span className="mb-1 block font-semibold">Type</span>
                 <select className={inp} value={p.type} onChange={(e) => setP(i, { type: e.target.value as Property["type"] })}>
                   {["Residential Plot", "Commercial Plot", "Joint Venture", "Estate Home"].map((t) => <option key={t}>{t}</option>)}
