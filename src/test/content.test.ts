@@ -34,9 +34,9 @@ describe("property reference codes", () => {
     expect(nextRef(defaultContent.properties)).toBe("PZE-0005");
   });
   it("duplicate codes are replaced", () => {
-    const p = defaultContent.properties[0];
+    const p = defaultContent.properties[0]!;
     const out = ensureRefs([p, { ...p, id: "x" }]);
-    expect(out[0].ref).not.toBe(out[1].ref);
+    expect(out[0]!.ref).not.toBe(out[1]!.ref);
   });
   it("prices are shown in naira only", () => {
     expect(formatNaira(4500000)).toBe("₦4,500,000");
