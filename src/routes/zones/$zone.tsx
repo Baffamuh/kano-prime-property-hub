@@ -24,7 +24,7 @@ function ZonePage() {
   const list = c.properties.filter((p) => p.location === zone);
   return (
     <>
-      <PageHeader eyebrow="Zone" title={zone} sub={z?.areas} />
+      <PageHeader eyebrow="Zone" title={zone} sub={z?.areas ?? ""} />
       <section className="mx-auto max-w-7xl px-5 py-14">
         <Link to="/zones" className="text-sm font-semibold text-primary">← All zones</Link>
         {list.length === 0 ? (
