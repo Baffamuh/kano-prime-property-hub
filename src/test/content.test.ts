@@ -22,3 +22,23 @@ describe("payment plan", () => {
     expect(parsePrice("Negotiable")).toBeNull();
   });
 });
+
+import { ensureRefs, formatNaira, nextRef } from "@/lib/content";
+describe("property reference codes", () => {
+  it("every default property has a unique PZE code", () => {
+    const refs = ensureRefs(defaultContent.properties).map((p) => p.ref);
+    expect(new Set(refs).size).toBe(refs.length);
+    expect(refs.every((r) => /^PZE-\d{4}$/.test(r!))).toBe(true);
+  });
+  it("next code follows the highest existing one", () => {
+    expect(nextRef(defaultContent.properties)).toBe("PZE-0005");
+  });
+  it("duplicate codes are replaced", () => {
+    const p = defaultContent.properties[0];
+    const out = ensureRefs([p, { ...p, id: "x" }]);
+    expect(out[0].ref).not.toBe(out[1].ref);
+  });
+  it("prices are shown in naira only", () => {
+    expect(formatNaira(4500000)).toBe("₦4,500,000");
+  });
+});
