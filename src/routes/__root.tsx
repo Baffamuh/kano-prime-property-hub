@@ -6,7 +6,9 @@ import {
   useRouter,
   HeadContent,
   Scripts,
-  type ErrorComponentProps,, useRouterState } from "@tanstack/react-router";
+  type ErrorComponentProps,
+  useRouterState,
+} from "@tanstack/react-router";
 import { useEffect, type ReactNode } from "react";
 
 import { SiteShell } from "@/components/site-shell";
