@@ -8,3 +8,5 @@
 > Commits you push to the connected branch sync back to Lovable and show up in
 > the editor, so keep the branch in a working state.
 <!-- LOVABLE:END -->
+
+- Site content (phones, text, images, listings) lives in src/lib/content.ts defaults and is overridden client-side via localStorage from /admin; no backend, to keep hosting free.
